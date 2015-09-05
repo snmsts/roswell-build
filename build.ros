@@ -1,0 +1,26 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let* ((target (or (ros:getenv "TARGET")
+                     (first argv)))
+         (uname-m (ros:roswell '("roswell-internal-use uname -m") :string t))
+         (uname (ros:roswell '("roswell-internal-use uname") :string t))
+         (tmpdir (merge-pathnames "tmp/" (ros:opt "homedir")))
+         (path (format nil "tmp/sbcl-*~A-~A/" uname-m uname))
+         (cwd (uiop/os:getcwd)))
+    (format t "Target: ~A~%" target)
+    (cond
+      ((equal target "sbcl")
+       (uiop/run-program:run-program "ros install sbcl --archive" :output :interactive)
+       (setq path (directory (merge-pathnames path (ros:opt "homedir")))
+             path (namestring (first path))
+             path (subseq path (length (namestring tmpdir))))
+       (uiop:chdir tmpdir)
+       (uiop/run-program:run-program (format nil "tar cjvf ~Asbcl-~A-~A-binary.tar.bz2 ~A" cwd uname-m uname path)
+                                     :output :interactive)))))
+

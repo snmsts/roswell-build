@@ -1,10 +1,11 @@
 language: common-lisp
+sudo: false
 env:
   global:
     - PATH=~/.roswell/bin:$PATH
     - ROSWELL_BRANCH=release
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
-    - LISP=sbcl
+    - LISP=sbcl-bin
   matrix:
     - TARGET=sbcl METHOD=ci
 os:
@@ -18,8 +19,9 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
+install:
+  - curl -L https://raw.githubusercontent.com/snmsts/roswell/$ROSWELL_BRANCH/scripts/install-for-ci.sh | sh
 script:
-  - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$METHOD" = "ci" ]; then ros version; fi
   - if [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "ci" ]; then ros config; fi

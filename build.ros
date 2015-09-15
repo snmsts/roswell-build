@@ -16,7 +16,7 @@ exec ros -Q -- $0 "$@"
     (format t "Target: ~A~%" target)
     (cond
       ((equal target "sbcl")
-       (uiop/run-program:run-program "ros install sbcl --archive" :output :interactive)
+       (uiop/run-program:run-program "ros install sbcl" :output :interactive)
        (setq path (directory (merge-pathnames path (ros:opt "homedir")))
              path (namestring (first path))
              path (subseq path (length (namestring tmpdir))))

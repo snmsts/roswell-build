@@ -21,6 +21,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
 install:
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/$ROSWELL_BRANCH/scripts/install-for-ci.sh | sh
+  - git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github
 script:
   - if [ "$METHOD" = "ci" ]; then ros version; fi
   - if [ "$METHOD" = "ci" ]; then ros version=t run; fi

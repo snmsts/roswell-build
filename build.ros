@@ -3,6 +3,9 @@
 #|
 exec ros -Q -- $0 "$@"
 |#
+(ql:quickload '(:split-sequence))
+(ros:ignore-shebang)
+(load (format nil "~A/~A" (uiop:getenv "ROSWELL_INSTALL_DIR") "share/common-lisp/source/roswell/install.lisp"))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
@@ -16,11 +19,11 @@ exec ros -Q -- $0 "$@"
     (format t "Target: ~A~%" target)
     (cond
       ((equal target "sbcl")
-       (uiop/run-program:run-program "ros install sbcl" :output :interactive)
-       (setq path (directory (merge-pathnames path (ros:opt "homedir")))
-             path (namestring (first path))
-             path (subseq path (length (namestring tmpdir))))
-       (uiop:chdir tmpdir)
-       (uiop/run-program:run-program (format nil "tar cjvf ~Asbcl-~A-~A-binary.tar.bz2 ~A" cwd uname-m uname path)
-                                     :output :interactive)))))
+       (let ((version (first (split-sequence:split-sequence #\newline (ros:roswell '("list" "versions" "sbcl"))))))
+         (format t "detected version is ~A~%" version)
+         (uiop:run-program (format nil "ros install sbcl/~A --without-install" version) :output :interactive)
+         (uiop:chdir (format nil "~~/.roswell/src/sbcl-~A" version))
+         (let ((*standard-output* (make-instance 'ros.install::count-line-stream)))
+           (uiop:run-program "sh make.sh '--xc-host=ros -L sbcl-bin run'" :output t)))))))
+
 

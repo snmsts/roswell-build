@@ -33,6 +33,6 @@ exec ros -Q -- $0 "$@"
            (uiop:chdir path)
            (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output)
              (format out "~S" version))
-           (uiop:run-program '("sh" "make.sh" "--xc-host=ros -L sbcl-bin run") :output :interactive)))))))
+           (uiop:run-program '("bash" "make.sh" "--xc-host=ros -L sbcl-bin run") :output t)))))))
 
 

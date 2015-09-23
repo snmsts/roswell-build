@@ -3,7 +3,7 @@ sudo: required
 env:
   global:
     - PATH=~/.roswell/bin:$PATH
-    - ROSWELL_BRANCH=release
+    - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - LISP=sbcl-bin
   matrix:

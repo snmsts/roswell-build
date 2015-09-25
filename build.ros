@@ -50,7 +50,7 @@ exec ros -Q -- $0 "$@"
        (let ((tagname (format nil "sbcl-~A" *version*)))
          (ensure-release-exists tagname)
          (!"extract-sbcl")
-         (dolist (arch '("x86" "x86-64"))
+         (let ((arch (ros:getenv "TARGETARCH")))
            (unless (asset-exist-p (format nil "sbcl-~A-~A-~A.~A" *version* arch (uname) "tar.bz2") tagname)
              (format t "start compiling~A~%" arch)
              (!"build-sbcl" arch)

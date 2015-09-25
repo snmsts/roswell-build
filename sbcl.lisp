@@ -8,25 +8,29 @@
   (let ((version *version*))
     (format t "detected version is ~A~%" version)
     (uiop:run-program (format nil "ros install sbcl/~A --without-install" version) :output :interactive)
-    (ensure-directories-exist "~/.roswell/src/")
-    (unless (probe-file (format nil "~~/.roswell/src/sbcl-~A/" version))
-      (uiop:run-program (format nil "tar xf ~~/.roswell/archives/sbcl-~A.tar.gz -C ~~/.roswell/src/" version) :output :interactive)
-      (uiop:run-program (format nil "mv ~~/.roswell/src/sbcl-sbcl-~A ~~/.roswell/src/sbcl-~A" version version) :output :interactive))))
+    (ensure-directories-exist "~/src/")
+    (unless (probe-file (format nil "~~/src/sbcl-~A/" version))
+      (uiop:run-program (format nil "tar xf ~~/.roswell/archives/sbcl-~A.tar.gz -C ~~/src/" version) :output :interactive)
+      (uiop:run-program (format nil "mv ~~/src/sbcl-sbcl-~A ~~/src/sbcl-~A" version version) :output :interactive))))
 
 (defun build-sbcl (arch)
   (let* ((version *version*)
-         (path (format nil "~~/.roswell/src/sbcl-~A/" version))
-         (out (if (equal arch "x86") :interactive (make-instance 'ros.install::count-line-stream))))
+         (path (format nil "~~/src/sbcl-~A/" version))
+         (out (make-instance 'ros.install::count-line-stream)))
     (uiop:chdir path)
     (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output
                          :if-exists :supersede
                          :if-does-not-exist :create)
       (format out "~S" version))
     (uiop:run-program `("bash" "make.sh" "--xc-host=ros -L sbcl-bin run"
-                               ,(format nil "--arch=~A" arch)) :output out)))
+                               ,(format nil "--arch=~A" arch)
+                               #+darwin "--with-sb-thread"
+                               #-win32 "--with-sb-core-compression")
+                      :output out)))
 
 (defun archive-sbcl (arch)
   ;;not yet
   (let* ((version *version*)
-         (archive-dir (merge-pathnames (format nil "tmp/sbcl-~A-~A-~A/" version arch (uname)) (homedir))))
+         (archive-name (format nil "sbcl-~A-~A-~A" version arch (uname)))
+         (archive-dir (merge-pathnames (format nil "tmp/~A/" archive-name) (homedir))))
     (ensure-directories-exist archive-dir)))

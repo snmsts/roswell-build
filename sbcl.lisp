@@ -16,14 +16,14 @@
 (defun build-sbcl (arch)
   (let* ((version *version*)
          (path (format nil "~~/.roswell/src/sbcl-~A/" version))
-         (*standard-output* (if (equal arch "x86") :interactive (make-instance 'ros.install::count-line-stream))))
+         (out (if (equal arch "x86") :interactive (make-instance 'ros.install::count-line-stream))))
     (uiop:chdir path)
     (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output
                          :if-exists :supersede
                          :if-does-not-exist :create)
       (format out "~S" version))
     (uiop:run-program `("bash" "make.sh" "--xc-host=ros -L sbcl-bin run"
-                               ,(format nil "--arch=~A" arch)) :output t)))
+                               ,(format nil "--arch=~A" arch)) :output out)))
 
 (defun archive-sbcl (arch)
   ;;not yet

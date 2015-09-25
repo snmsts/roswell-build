@@ -23,7 +23,7 @@ exec ros -Q -- $0 "$@"
       ((equal target "sbcl")
        (load "sbcl.lisp")
        (!"extract-sbcl")
-       (dolist (arch '("x86-64" "x86"))
+       (dolist (arch '("x86" "x86-64"))
          (!"build-sbcl" arch)
          (!"archive-sbcl" arch))))
     (terpri)

@@ -19,7 +19,8 @@ addons:
      - gcc-multilib
      - gcc-mingw-w64-i686
      - binutils-mingw-w64-i686
-     - wine
+#     - wine
+     - zlib1g-dev:i386
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi

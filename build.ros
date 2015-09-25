@@ -3,36 +3,28 @@
 #|
 exec ros -Q -- $0 "$@"
 |#
-(ql:quickload '(:split-sequence))
-(ros:ignore-shebang)
-(load (format nil "~A/~A" (uiop:getenv "ROSWELL_INSTALL_DIR") "share/common-lisp/source/roswell/install.lisp"))
+(ql:quickload '(:split-sequence) :silent t)
+
+(defun uname ()
+  (ros:roswell '("roswell-internal-use" "uname") :string t))
+
+(defun homedir ()
+  (ros:opt "homedir"))
+
+(defun ! (string &rest r)
+  (apply (read-from-string string) r))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let* ((target (or (ros:getenv "TARGET")
-                     (first argv)))
-         #+nil(uname-m (ros:roswell '("roswell-internal-use uname -m") :string t))
-         #+nil(uname (ros:roswell '("roswell-internal-use uname") :string t))
-         #+nil(tmpdir (merge-pathnames "tmp/" (ros:opt "homedir")))
-         #+nil(path (format nil "tmp/sbcl-*~A-~A/" uname-m uname))
-         #+nil(cwd (uiop/os:getcwd)))
+  (let ((target (or (ros:getenv "TARGET")
+                    (first argv))))
     (format t "Target: ~A~%" target)
     (cond
       ((equal target "sbcl")
-       (let ((version (first (split-sequence:split-sequence #\newline (ros:roswell '("list" "versions" "sbcl"))))))
-         (format t "detected version is ~A~%" version)
-         (uiop:run-program (format nil "ros install sbcl/~A --without-install" version) :output :interactive)
-         (ensure-directories-exist "~/.roswell/src/")
-	 (unless (probe-file (format nil "~~/.roswell/src/sbcl-~A/" version))
-	   (uiop:run-program (format nil "tar xf ~~/.roswell/archives/sbcl-~A.tar.gz -C ~~/.roswell/src/" version)
-			     :output :interactive)
-	   (uiop:run-program (format nil "mv ~~/.roswell/src/sbcl-sbcl-~A ~~/.roswell/src/sbcl-~A" version version)
-			     :output :interactive))
-         (let ((path (format nil "~~/.roswell/src/sbcl-~A/" version))
-               (*standard-output* (make-instance 'ros.install::count-line-stream)))
-           (uiop:chdir path)
-           (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output)
-             (format out "~S" version))
-           (uiop:run-program '("bash" "make.sh" "--xc-host=ros -L sbcl-bin run") :output t)))))))
-
-
+       (load "sbcl.lisp")
+       (!"extract-sbcl")
+       (dolist (arch '("x86-64" "x86"))
+         (!"build-sbcl" arch)
+         (!"archive-sbcl" arch))))
+    (terpri)
+    (uiop:quit 0)))

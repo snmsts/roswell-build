@@ -16,7 +16,7 @@
 (defun build-sbcl (arch)
   (let* ((version *version*)
          (path (format nil "~~/.roswell/src/sbcl-~A/" version))
-         (*standard-output* (make-instance 'ros.install::count-line-stream)))
+         (*standard-output* (if (equal arch "x86") :interactive (make-instance 'ros.install::count-line-stream))))
     (uiop:chdir path)
     (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output
                          :if-exists :supersede

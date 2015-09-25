@@ -3,8 +3,11 @@
 #|
 exec ros -Q -- $0 "$@"
 |#
-(ql:quickload '(:split-sequence) :silent t)
-
+(ql:quickload '(:split-sequence :sn.github) :silent t)
+(use-package :sn.github.release)
+(defvar *owner* "snmsts")
+(defvar *repo* "roswell-build")
+(defvar *version* nil)
 (defun uname ()
   (ros:roswell '("roswell-internal-use" "uname") :string t))
 
@@ -14,6 +17,28 @@ exec ros -Q -- $0 "$@"
 (defun ! (string &rest r)
   (apply (read-from-string string) r))
 
+(defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
+  (find tagname
+        (sn.github.release::releases-list owner repo)
+        :key (lambda (x) (getf x :|tag_name|))
+        :test 'equal))
+
+(defun ensure-release-exists (tagname &key (owner *owner*) (repo *repo*))
+  (let ((found (release-exist-p tagname :owner owner :repo repo)))
+    (if found
+        found
+        (sn.github.release::release-create owner repo tagname))))
+
+(defun asset-exist-p (name tagname &key (owner *owner*) (repo *repo*))
+  (find name (getf (release-exist-p tagname :owner owner :repo repo) :|assets|)
+        :test 'equal
+        :key (lambda (x) (getf x :|name|))))
+
+(defun asset-upload (path tagname &key (owner *owner*) (repo *repo*))
+  (sn.github.release::release-asset-upload
+   owner repo
+   (getf (release-exist-p tagname :owner owner :repo repo) :|id|) path))
+
 (defun main (&rest argv)
   (declare (ignorable argv))
   (let ((target (or (ros:getenv "TARGET")
@@ -21,10 +46,13 @@ exec ros -Q -- $0 "$@"
     (format t "Target: ~A~%" target)
     (cond
       ((equal target "sbcl")
-       (load "sbcl.lisp")
-       (!"extract-sbcl")
-       (dolist (arch '("x86" "x86-64"))
-         (!"build-sbcl" arch)
-         (!"archive-sbcl" arch))))
+       (let ((tagname (format nil "sbcl-~A" *version*)))
+         (ensure-release-exists tagname)
+         (unless (asset-exist-p (format nil "sbcl-~A-~A-~A.~A" *version* arch (uname) "tar.bz2") tagname)
+           (load "sbcl.lisp")
+           (!"extract-sbcl")
+           (dolist (arch '("x86" "x86-64"))
+             (!"build-sbcl" arch)
+             (asset-upload (!"archive-sbcl" arch) tagname))))))
     (terpri)
     (uiop:quit 0)))

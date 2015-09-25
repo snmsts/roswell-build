@@ -18,7 +18,9 @@
          (path (format nil "~~/.roswell/src/sbcl-~A/" version))
          (*standard-output* (make-instance 'ros.install::count-line-stream)))
     (uiop:chdir path)
-    (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output :if-exists :overwrite)
+    (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output
+                         :if-exists :supersede
+                         :if-does-not-exist :create)
       (format out "~S" version))
     (uiop:run-program `("bash" "make.sh" "--xc-host=ros -L sbcl-bin run"
                                ,(format nil "--arch=~A" arch)) :output t)))

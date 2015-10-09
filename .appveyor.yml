@@ -1,8 +1,6 @@
 platform:
   - x64
 environment:
-  global:
-    ROSWELL_INSTALL_DIR: %APPVEYOR_BUILD_FOLDER%\roswell
   matrix:
     - MSYS2_ARCH: i686
       MSYSTEM: MINGW32
@@ -12,6 +10,7 @@ environment:
 install:
 
 build_script:
+  - set ROSWELL_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%\roswell
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-$MSYS2_ARCH-gcc autoconf automake make zlib-devel"

@@ -11,11 +11,12 @@ install:
 
 build_script:
   - set ROSWELL_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%\roswell
+  - set PATH=%ROSWELL_INSTALL_DIR%;%PATH%
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
-  - git clone -q --branch=release https://github.com/snmsts/roswell.git %ROSWELL_INSTALL_DIR%
-  - C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER;cd roswell; exec 0</dev/null; ./bootstrap; ./configure; make install"
+  - appveyor DownloadFile https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.PS1
+  - ps: install-for-ci.PS1
   
 test_script:
-  - C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER;ros build.ros"
+  - ros build.ros

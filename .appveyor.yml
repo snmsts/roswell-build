@@ -4,12 +4,12 @@ environment:
   matrix:
     - MSYS2_ARCH: i686
       MSYSTEM: MINGW32
-      TARGET=sbcl
-      TARGETARCH=x86
+      TARGET: sbcl
+      TARGETARCH: x86
     - MSYS2_ARCH: x86_64
       MSYSTEM: MINGW64
-      TARGET=sbcl
-      TARGETARCH=x86-64
+      TARGET: sbcl
+      TARGETARCH: x86-64
 
 install:
 

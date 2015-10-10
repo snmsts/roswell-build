@@ -13,7 +13,7 @@ build_script:
   - set ROSWELL_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%\roswell
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-$MSYS2_ARCH-gcc autoconf automake make zlib-devel"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
   - git clone -q --branch=release https://github.com/snmsts/roswell.git %ROSWELL_INSTALL_DIR%
   - C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER;cd roswell; exec 0</dev/null; ./bootstrap; ./configure; make install"
   

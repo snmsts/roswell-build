@@ -13,6 +13,7 @@ build_script:
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
+  - C:\msys64\usr\bin\bash -lc "where gcc"
   - set ROSWELL_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%\roswell
   - set PATH=%ROSWELL_INSTALL_DIR%;%PATH%
   - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/vk58iojwkgq51nw4/artifacts/Roswell-i686.zip

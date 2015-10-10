@@ -15,8 +15,8 @@ build_script:
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
-  - appveyor DownloadFile https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.PS1
-  - ps: install-for-ci.PS1
+  - appveyor DownloadFile https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.PS1 -FileName C:\projects\roswell-build\install-for-ci.PS1
+  - ps: C:\projects\roswell-build\install-for-ci.PS1
   
 test_script:
   - ros build.ros

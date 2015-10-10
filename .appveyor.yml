@@ -22,7 +22,7 @@ build_script:
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - set PATH=%ROSWELL_INSTALL_DIR%;%PATH%
+  - set PATH=%APPVEYOR_BUILD_FOLDER%\roswell;%PATH%
   - set CC=i686-w64-mingw32-gcc
   - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/vk58iojwkgq51nw4/artifacts/Roswell-i686.zip
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip

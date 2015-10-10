@@ -1,5 +1,10 @@
 (ros:ignore-shebang)
-(mapc (lambda (x)(load (format nil "~A/~A~A" (uiop:getenv "ROSWELL_INSTALL_DIR") "share/common-lisp/source/roswell/"x)))
+(mapc (lambda (x)
+        (ignore-errors (load (format nil "~A/~A~A" (uiop:getenv "ROSWELL_INSTALL_DIR") "share/common-lisp/source/roswell/" x)))
+        (ignore-errors (load (merge-pathnames (format nil "lisp/~A" x)
+                                              (make-pathname :defaults (ros:roswell '("roswell-internal-use" "which" "ros") :string t)
+                                                             :name nil
+                                                             :type nil)))))
       '("install.lisp" "install-sbcl.lisp"))
 
 (defparameter *version* (or *version* (first (split-sequence:split-sequence #\newline (ros:roswell '("list" "versions" "sbcl"))))))

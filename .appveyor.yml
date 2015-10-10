@@ -17,5 +17,6 @@ build_script:
   - set PATH=%ROSWELL_INSTALL_DIR%;%PATH%
   - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/vk58iojwkgq51nw4/artifacts/Roswell-i686.zip
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip
-  - ros build.ros
+  - git clone https://github.com/snmsts/sn.github.git %APPVEYOR_BUILD_FOLDER%\sn.github
+  - ros -l %APPVEYOR_BUILD_FOLDER%\sn.github\sn.github.asd build.ros
 test_script:

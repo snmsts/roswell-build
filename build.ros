@@ -4,7 +4,6 @@
 exec ros -Q -- $0 "$@"
 |#
 (ql:quickload '(:split-sequence :sn.github))
-(use-package :sn.github.release)
 (defvar *owner* "snmsts")
 (defvar *repo* "roswell-build")
 (defvar *version* nil)

@@ -26,6 +26,6 @@ build_script:
   - set CC=i686-w64-mingw32-gcc
   - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/9hrncgu1iofgxkbn/artifacts/Roswell-i686.zip
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip
-
+  - ros list versions sbcl
   - ros -s cffi-grovel -e "(setf cffi-grovel::*cpu-word-size-flags* '(\"-m32\"))" build.ros
 test_script:

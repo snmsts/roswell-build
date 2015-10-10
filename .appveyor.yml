@@ -24,7 +24,7 @@ build_script:
   - set PATH=C:\msys64\mingw32\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%\roswell;%PATH%
   - set CC=i686-w64-mingw32-gcc
-  - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/vk58iojwkgq51nw4/artifacts/Roswell-i686.zip
+  - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/bnpc87p6752rrp7p/artifacts/Roswell-i686.zip
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip
 
   - ros -s cffi-grovel -e "(setf cffi-grovel::*cpu-word-size-flags* '(\"-m32\"))" build.ros

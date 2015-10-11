@@ -18,7 +18,7 @@
     (uiop:run-program (format nil "ros install sbcl/~A --without-install" version) :output :interactive)
     (ensure-directories-exist (format nil "~A/src/" home))
     (unless (probe-file (format nil "~A/src/sbcl-~A/" home version))
-      (uiop:run-program (format nil "ros roswell-internal-use tar xf ~A -C ~A"
+      (uiop:run-program (format nil "ros roswell-internal-use tar -xf ~A -C ~A"
                                 (native-namestring (format nil "~A/.roswell/archives/sbcl-~A.tar.gz" home version))
                                 (native-namestring (format nil "~A/src/" home))) :output :interactive)
       (uiop:run-program (format nil "~A ~A ~A"

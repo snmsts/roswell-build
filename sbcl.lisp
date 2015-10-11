@@ -10,13 +10,22 @@
 (defparameter *version* (or *version* (first (split-sequence:split-sequence #\newline (ros:roswell '("list" "versions" "sbcl"))))))
 
 (defun extract-sbcl ()
-  (let ((version *version*))
+  (let ((version *version*)
+        (home (if (find :win32 *features*)
+                  (format nil "~A~A" (uiop:getenv"HOMEDRIVE") (uiop:getenv "HOMEPATH"))
+                  "~")))
     (format t "detected version is ~A~%" version)
     (uiop:run-program (format nil "ros install sbcl/~A --without-install" version) :output :interactive)
-    (ensure-directories-exist "~/src/")
-    (unless (probe-file (format nil "~~/src/sbcl-~A/" version))
-      (uiop:run-program (format nil "tar xf ~~/.roswell/archives/sbcl-~A.tar.gz -C ~~/src/" version) :output :interactive)
-      (uiop:run-program (format nil "mv ~~/src/sbcl-sbcl-~A ~~/src/sbcl-~A" version version) :output :interactive))))
+    (ensure-directories-exist (format nil "~A/src/" home))
+    (unless (probe-file (format nil "~A/src/sbcl-~A/" home version))
+      (uiop:run-program (format nil "ros roswell-internal-use tar xf ~A -C ~A"
+                                (native-namestring (format nil "~A/.roswell/archives/sbcl-~A.tar.gz" home version))
+                                (native-namestring (format nil "~A/src/" home))) :output :interactive)
+      (uiop:run-program (format nil "~A ~A ~A"
+                                (if (find :win32 *features*)"ren" "mv")
+                                (native-namestring (format nil "~A/src/sbcl-sbcl-~A/" home version))
+                                (native-namestring (format nil "~A/src/sbcl-~A/" home version)))
+                        :output :interactive))))
 
 (defun build-sbcl (arch)
   (let* ((version *version*)

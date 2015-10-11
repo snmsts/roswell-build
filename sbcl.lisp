@@ -40,7 +40,7 @@
                          :if-does-not-exist :create)
       (format out "~S" version))
     (uiop:run-program `(,(format nil "~A~A" (if (find :win32 *features*)
-                                                (format nil "~A\\usr\\bin\\" (uiop:getenv "APPVEYOR_BUILD_FOLDER"))
+                                                (format nil "~A\\msys~A\\usr\\bin\\" (uiop:getenv "APPVEYOR_BUILD_FOLDER") (uiop:getenv "MSYS2_BITS"))
                                                 "") "bash")
                          "make.sh" "--xc-host=ros -L sbcl-bin run"
                          ,(format nil "--arch=~A" arch)

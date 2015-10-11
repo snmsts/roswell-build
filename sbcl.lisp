@@ -15,31 +15,37 @@
                   (format nil "~A~A" (uiop:getenv"HOMEDRIVE") (uiop:getenv "HOMEPATH"))
                   "~")))
     (format t "detected version is ~A~%" version)
-    (uiop:run-program (format nil "ros install sbcl/~A --without-install" version) :output :interactive)
+    (ros:roswell `("roswell-internal-use"
+                   "download"
+                   ,(format nil "https://github.com/sbcl/sbcl/archive/sbcl-~A.tar.gz" version)
+                   ,(native-namestring (merge-pathnames "sbcl.tar.gz" (format nil "~A/" home)))))
     (ensure-directories-exist (format nil "~A/src/" home))
     (unless (probe-file (format nil "~A/src/sbcl-~A/" home version))
       (uiop:run-program (format nil "ros roswell-internal-use tar -xf ~A -C ~A"
-                                (native-namestring (format nil "~A/.roswell/archives/sbcl-~A.tar.gz" home version))
+                                (native-namestring (format nil "~A/sbcl.tar.gz" home version))
                                 (native-namestring (format nil "~A/src/" home))) :output :interactive)
-      (uiop:run-program (format nil "~A ~A ~A"
-                                (if (find :win32 *features*)"ren" "mv")
-                                (native-namestring (format nil "~A/src/sbcl-sbcl-~A/" home version))
-                                (native-namestring (format nil "~A/src/sbcl-~A/" home version)))
-                        :output :interactive))))
+      (rename-file (native-namestring (format nil "~A/src/sbcl-sbcl-~A/" home version))
+                   (native-namestring (format nil "~A/src/sbcl-~A/" home version))))))
 
 (defun build-sbcl (arch)
   (let* ((version *version*)
-         (path (format nil "~~/src/sbcl-~A/" version))
+         (home (if (find :win32 *features*)
+                   (format nil "~A~A" (uiop:getenv"HOMEDRIVE") (uiop:getenv "HOMEPATH"))
+                   "~"))
+         (path (format nil "~A/src/sbcl-~A/" home version))
          (out (make-instance 'ros.install::count-line-stream)))
     (uiop:chdir path)
     (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output
                          :if-exists :supersede
                          :if-does-not-exist :create)
       (format out "~S" version))
-    (uiop:run-program `("bash" "make.sh" "--xc-host=ros -L sbcl-bin run"
-                               ,(format nil "--arch=~A" arch)
-                               #+darwin "--with-sb-thread"
-                               #-win32 "--with-sb-core-compression")
+    (uiop:run-program `(,(format nil "~A~A" (if (find :win32 *features*)
+                                                (format nil "~A\\usr\\bin\\" (uiop:getenv "APPVEYOR_BUILD_FOLDER"))
+                                                "") "bash")
+                         "make.sh" "--xc-host=ros -L sbcl-bin run"
+                         ,(format nil "--arch=~A" arch)
+                         #+darwin "--with-sb-thread"
+                         #-win32 "--with-sb-core-compression")
                       :output out)))
 
 (defun archive-sbcl (arch)

@@ -33,7 +33,7 @@
                    (format nil "~A~A" (uiop:getenv"HOMEDRIVE") (uiop:getenv "HOMEPATH"))
                    "~"))
          (path (format nil "~A/src/sbcl-~A/" home version))
-         (out (make-instance 'ros.install::count-line-stream)))
+         (out :interactive #+nil(make-instance 'ros.install::count-line-stream)))
     (uiop:chdir path)
     (with-open-file (out (merge-pathnames "version.lisp-expr" path) :direction :output
                          :if-exists :supersede

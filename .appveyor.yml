@@ -26,6 +26,7 @@ build_script:
   - mkdir %HOMEDRIVE%%HOMEPATH%\.roswell\local-projects
   - git clone https://github.com/snmsts/sn.github.git %HOMEDRIVE%%HOMEPATH%\.roswell\local-projects\sn.github
   - git clone https://github.com/Rudolph-Miller/cl-gists.git %HOMEDRIVE%%HOMEPATH%\.roswell\local-projects\cl-gists
+  - git clone https://github.com/sbcl/sbcl.git PATH=%APPVEYOR_BUILD_FOLDER%\sbcl
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
@@ -34,7 +35,7 @@ build_script:
   - set CC=i686-w64-mingw32-gcc
   - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/9hrncgu1iofgxkbn/artifacts/Roswell-i686.zip
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip
-  - ros list versions sbcl
+  - C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER;ros list versions sbcl|heand -n1> sbcl-version;cd sbcl;git checkout sbcl-`cat ../sbcl-version`;bash make.sh"
   - ros -s cffi-grovel -e "(setf cffi-grovel::*cpu-word-size-flags* '(\"-m32\"))" build.ros
 
 test_script:

@@ -47,7 +47,7 @@
                     (format nil "~A\\msys~A\\usr\\bin" (uiop:getenv "APPVEYOR_BUILD_FOLDER") (uiop:getenv "MSYS2_BITS"))
                     (uiop:getenv "PATH"))))
     (sb-posix:unsetenv "CC")
-    (uiop:run-program `(,(format nil "~A~A" (if (find :win32 *features*)
+    #-win32(uiop:run-program `(,(format nil "~A~A" (if (find :win32 *features*)
                                                 (format nil "~A\\msys~A\\usr\\bin\\" (uiop:getenv "APPVEYOR_BUILD_FOLDER") (uiop:getenv "MSYS2_BITS"))
                                                 "") "bash")
                          "make.sh" "--xc-host=ros -L sbcl-bin run"

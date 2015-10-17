@@ -1,0 +1,43 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(ql:quickload :sn.github)
+
+(defvar *owner* (or (uiop:getenv "GITHUB_OWNER") "snmsts"))
+(defvar *repo*  (or (uiop:getenv "GITHUB_REPO") "roswell-build"))
+
+(defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
+  (ignore-errors
+    (find tagname
+          (sn.github.release::releases-list owner repo)
+          :key (lambda (x) (getf x :|tag_name|))
+          :test 'equal)))
+
+(defun ensure-release-exists (tagname &key (owner *owner*) (repo *repo*))
+  (let ((found (release-exist-p tagname :owner owner :repo repo)))
+    (if found
+        found
+        (sn.github.release::release-create owner repo tagname))))
+
+(defun asset-exist-p (name tagname &key (owner *owner*) (repo *repo*))
+  (find name (getf (release-exist-p tagname :owner owner :repo repo) :|assets|)
+        :test 'equal
+        :key (lambda (x) (getf x :|name|))))
+
+(defun asset-upload (path tagname &key (owner *owner*) (repo *repo*))
+  (sn.github.release::release-asset-upload
+   owner repo
+   (getf (release-exist-p tagname :owner owner :repo repo) :|id|) path))
+
+(defun main (cmd  &rest argv)
+  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
+    (error "GITHUB_OAUTH_TOKEN should be set"))
+  (cond ((equalp cmd "upload")
+         (let ((path (first argv))
+               (tagname (second argv)))
+           (asset-upload (truename path) tagname)))
+        ((equalp cmd "create")
+         (ensure-release-exists (first argv))))
+  (uipo:quit 0))

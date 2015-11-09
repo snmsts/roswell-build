@@ -28,7 +28,7 @@ build_script:
   - git clone https://github.com/Rudolph-Miller/cl-gists.git %HOMEDRIVE%%HOMEPATH%\.roswell\local-projects\cl-gists
   - git clone https://github.com/sbcl/sbcl.git %APPVEYOR_BUILD_FOLDER%\sbcl
   - set PATH=%APPVEYOR_BUILD_FOLDER%\roswell;%PATH%
-  - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/9hrncgu1iofgxkbn/artifacts/Roswell-i686.zip
+  - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/tckncox65xl8on71/artifacts/Roswell-i686.zip
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip
   - ros list versions sbcl > %APPVEYOR_BUILD_FOLDER%\sbcl-version
   - msys%MSYS2_BITS%\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER/sbcl;git checkout sbcl-`cat $APPVEYOR_BUILD_FOLDER%/sbcl-version|head -n1`;bash make.sh --xc-host='ros -L sbcl-bin run'"

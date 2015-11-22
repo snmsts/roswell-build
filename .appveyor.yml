@@ -28,7 +28,7 @@ build_script:
   - git clone https://github.com/Rudolph-Miller/cl-gists.git %HOMEDRIVE%%HOMEPATH%\.roswell\local-projects\cl-gists
   - git clone https://github.com/sbcl/sbcl.git %APPVEYOR_BUILD_FOLDER%\sbcl
   - set PATH=%APPVEYOR_BUILD_FOLDER%\roswell;%APPVEYOR_BUILD_FOLDER%\sbcl;%PATH%
-  - set SBCLHOME=%APPVEYOR_BUILD_FOLDER%\sbcl\
+  - set SBCL_HOME=%APPVEYOR_BUILD_FOLDER%\sbcl\
   - appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/tckncox65xl8on71/artifacts/Roswell-i686.zip
   - appveyor DownloadFile http://prdownloads.sourceforge.net/sbcl/sbcl-1.3.0-x86-64-windows-binary.msi
   - msiexec /i sbcl-1.3.0-x86-64-windows-binary.msi /qn INSTALLDIR=%APPVEYOR_BUILD_FOLDER%\sbcl

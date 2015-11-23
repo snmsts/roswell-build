@@ -33,7 +33,7 @@ build_script:
   - appveyor DownloadFile http://prdownloads.sourceforge.net/sbcl/sbcl-1.3.0-x86-64-windows-binary.msi
   - msiexec /a sbcl-1.3.0-x86-64-windows-binary.msi /qn targetdir=%APPVEYOR_BUILD_FOLDER%\sbcl-bin
   - 7z x -o%APPVEYOR_BUILD_FOLDER% Roswell-i686.zip
-  - msys%MSYS2_BITS%\usr\bin\bash -lc "mv $APPVEYOR_BUILD_FOLDER/sbcl-bin/PFiles/*/*/* $APPVEYOR_BUILD_FOLDER/sbcl-bin/"
+  - msys%MSYS2_BITS%\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER;mv sbcl-bin/PFiles/*/*/* sbcl-bin/"
   - ros list versions sbcl > %APPVEYOR_BUILD_FOLDER%\sbcl-version
   - msys%MSYS2_BITS%\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER/sbcl;env;git checkout sbcl-`cat $APPVEYOR_BUILD_FOLDER%/sbcl-version|head -n1`;bash make.sh --xc-host='sbcl'"
   - C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
